@@ -4,7 +4,7 @@ import axios from 'axios'
 
 const products = (token, callback) => {
    // Send Token in headers
-   axios.get(`${BASE_URL}/products`, {
+   axios.get(`${BASE_URL}/items`, {
       headers: {
          token
       }})

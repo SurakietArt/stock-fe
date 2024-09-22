@@ -34,7 +34,7 @@
    //Reload / get product if event reload-product firing
    const reloadProduct = () => {
       //Get All products from server
-      store.dispatch('getProductsBy', bodySearch.value)
+     store.dispatch('getProducts')
    }
    
    //Get all products
@@ -80,7 +80,7 @@
       }
       
       //Set fullname from server
-      store.dispatch('getProfile')
+      // store.dispatch('getProfile')
       
       //The body
       const body = {
@@ -93,7 +93,7 @@
          body.TOKEN = localStorage.getItem('TOKEN')
       }
       
-      checkToken(body, isAuthenticated)
+      // checkToken(body, isAuthenticated)
    })
    
 </script>

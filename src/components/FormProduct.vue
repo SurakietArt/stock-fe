@@ -17,36 +17,35 @@
          
          <!-- Name of product -->
          <div class="show-slide form-input mb-5">
-            <input v-model="form.name_product" type="text" placeholder="Name product" />
+            <input v-model="form.name" type="text" placeholder="ชื่อสินค้า" />
          </div>
          <!-- Price of product -->
          <div class="show-slide form-group mb-3 gap-3">
             <span class="btn-item bg-prussian-blue">
-               <strong>Rp</strong>
+               <strong>บาท</strong>
             </span>
-            <input v-model="form.price_product" class="w-10/12" type="number" placeholder="Price per unit" />
+            <input v-model="form.price_per_unit" class="w-10/12" type="number" placeholder="ราคาต่อหน่วย" />
          </div>
          <!-- Category of product -->
          <div class="show-slide mb-3">
-            <select v-model="form.category_product" class="select-form">
-               <option selected="true" value="0">Chose the category</option>
-               <template v-for="(item, index) in categoryArr" :key="index">
-                  <option class="px-3" :value="item.category">{{ item.category }}</option>
-               </template>
+            <select v-model="form.category_id" class="select-form">
+               <option selected="true" value="0">เลือกหมวดหมู่</option>
+              <template v-for="(category, index) in categoryArr" :key="index">
+                 <option class="px-3" :value="category.id">{{ category.name }}</option>
+              </template>
             </select>
          </div>
          <!-- Stock of product -->
          <div class="show-slide form-input mb-3">
-            <input v-model="form.stock_product" type="number" placeholder="Stocks" />
+            <input v-model="form.amount" type="number" placeholder="จำนวน" />
          </div>
          <!-- Unit per price product -->
          <div class="show-slide mb-3">
-            <select v-model="form.stock_unit" class="select-form">
-               <option selected="" value="0">Chose the unit</option>
-               <option class="px-3" value="pcs">pcs</option>
-               <option class="px-3" value="dozen">dozen</option>
-               <option class="px-3" value="rims">rims</option>
-               <option class="px-3" value="pack">pack</option>
+            <select v-model="form.unit_id" class="select-form">
+               <option selected="" value="0">เลือกหน่วย</option>
+              <template v-for="(unit, index) in unitArr" :key="index">
+                <option class="px-3" :value="unit.id">{{ unit.name }}</option>
+              </template>
             </select>
          </div>
          <!-- Form action -->
@@ -78,7 +77,8 @@
    import createProduct from '../api/products/create.js'
    import update from '../api/products/update.js'
    import removeFile from '../api/products/removeFile.js'
-   import categorys from '../api/category/categorys.js'
+   import categories from '../api/category/categories.js'
+   import units from "../api/units/units";
    
    //Init router
    const route = useRoute()
@@ -100,34 +100,43 @@
    const isForUpdate = ref(false)
    
    //List of category
-   const categoryArr = ref('')
-   
+   const categoryArr = ref([]);
+   const unitArr =ref([])
+
    onMounted(() => {
       
       //If currentRoute === 'update' , binding form with state
-      if (currentRoute.value === 'update') { 
-         isForUpdate.value = true
+      if (currentRoute.value === 'update') {
+        isForUpdate.value = true
          previewImg.value = body.value.image_product
-         form.value.name_product = body.value.name_product
-         form.value.price_product = body.value.price_product
-         form.value.stock_product = body.value.stock_product
-         form.value.image_product = body.value.image_product
-         form.value.category_product = body.value.category_product
-         form.value.stock_unit = body.value.stock_unit
+         form.value.id = body.value.id
+         form.value.name = body.value.name
+         form.value.price_per_unit = body.value.price_per_unit
+         form.value.category_id = body.value.category_id
+         form.value.amount = body.value.amount
+         form.value.unit_id = body.value.unit_id
       }
-      
-      //Get categorys from server and render to options
-      const getCategory = (status, res)  => {
-         if ( status ) {
-            categoryArr.value = res.data.results
-            categoryArr.value.push({ category: 'uncategorys' })
-         }
+     //Get categorys from server and render to options
+     const getCategory = (status, res) => {
+       if (status) {
+         categoryArr.value = res.data;
+       } else {
+         categoryArr.value = [];
+       }
+     };
+      const getUnits = (status, res) =>{
+        if (status) {
+          unitArr.value = res.data;
+        } else {
+          unitArr.value = [];
+        }
       }
-      
-      //Get category from server
-      categorys(getCategory)
+
+     //Get category from server
+     categories(getCategory)
+     units(getUnits)
    })
-   
+
    //Variabel for animated
    const isLoad = ref(false)
    const loadSuccess = ref(false)
@@ -135,21 +144,19 @@
    
    //form use for create product
    const form = ref({
-      name_product: '',
-      price_product: null,
-      stock_product: null,
-      image_product: '',
-      category_product: '0',
-      stock_unit: '0',
-      TOKEN: localStorage.getItem('TOKEN'),
+      price_per_unit: null,
+      category_id: 0,
+      amount: '',
+      unit_id: 0,
+     // image_product: '', // TODO: add image product to API
    })
-   
+
    //Form validation
    let isFormValid = ref([false])
    watch(form.value, () => {
-      isFormValid.value = Object.values(form.value).filter(val => val === '' || val === null || val === '0')
+      isFormValid.value = Object.values(form.value).filter(val => val === '' || val === null || val === 0 || val === '0')
    })
-   
+
    //Get file
    let file = ref(null)
    
@@ -178,59 +185,48 @@
          
          //Init FormData
          const formData = new FormData()
-         formData.append('file', file.value.files[0])
+         // formData.append('file', file.value.files[0]) // TODO: add image to backend API
          isLoad.value = true
          
          const successLoad = res => {
-            if (res.data.status === 200) {
+            if (res.status === 200 || res.status === 201) {
                setTimeout(() => {
                   loadSuccess.value = true   
-               }, 500)
+               }, 800)
             } else {
                setTimeout(() => {
                   isFailed.value = true
-               }, 300)
+               }, 500)
             }
          }
+
+        // const product = res => { // TODO: add image to API backend.
+        //
+        //     //If upload success
+        //     if ( res.data.status === 200 ) {
+        //        form.value.image_product = res.data.results.path
+        //        //Create product
+        //        createProduct(form.value, successLoad)
+        //     }
+        //  }
+
+        if (!isForUpdate.value) {
+          createProduct(form.value, successLoad)
+        } else {
+          update(form.value, successLoad, body.value.id)
+        }
          
-         //Create
-         const product = res => {
-            
-            //If upload success
-            if ( res.data.status === 200 ) {
-               form.value.image_product = res.data.results.path
-               //Create product
-               createProduct(form.value, successLoad)
-            }
-         }
-         
-         //Update
-         const updateProduct = res => {
-            //
-            if (res.data.status === 200) {
-               form.value.image_product = res.data.results.path
-               form.value.id_product = body.value.id_product
-               update(form.value, successLoad)
-               
-               //Remove old file
-               removeFile({
-                  TOKEN: localStorage.getItem('TOKEN'),
-                  image_product: body.value.image_product
-               })
-            }
-         }
-         
-         //upload file
-         if ( !isForUpdate.value ) upload(formData ,product)
-         else {
-            if ( form.value.image_product === 'true' ) {
-               //If user upload new file
-               upload(formData, updateProduct)
-            } else {
-               form.value.id_product = body.value.id_product
-               update(form.value, successLoad)
-            }
-         }
+         //upload file // TODO: add image to API backend
+         // if ( !isForUpdate.value ) upload(formData ,product)
+         // else {
+         //    if ( form.value.image_product === 'true' ) {
+         //       //If user upload new file
+         //       upload(formData, updateProduct)
+         //    } else {
+         //       form.value.id_product = body.value.id_product
+         //       update(form.value, successLoad)
+         //    }
+         // }
       
       }, 500)
    }

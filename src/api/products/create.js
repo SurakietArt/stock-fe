@@ -5,7 +5,7 @@ import BASE_URL from '../BASE_URL.js'
 
 const createProduct = (body, success) => {
    //Create fetch
-   axios.post(`${BASE_URL}/createProduct`, body , {
+   axios.post(`${BASE_URL}/items`, body , {
       headers: {
          token: body.TOKEN  
       }})

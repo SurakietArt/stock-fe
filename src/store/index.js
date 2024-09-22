@@ -13,18 +13,15 @@ const store = createStore({
 			  category: 0
 			},
 			deleteProduct: {
-			   TOKEN: localStorage.getItem('TOKEN'),
-			   id_product: '',
-			   image_product: ''
+				id: '',
 			},
 			updateProduct: {
-			  id_product: '',
-			  name_product: '',
-			  price_product: '',
-			  stock_product: '',
-			  image_product: '',
-			  category_product: '',
-			  stock_unit: ''
+			  id: '',
+			  name: '',
+				price_per_unit: '',
+				category_id: '',
+				amount: '',
+				unit_id: '',
 			},
 			currentCategory: 'All',
 			keyword: ''

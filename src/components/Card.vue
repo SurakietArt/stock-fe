@@ -17,28 +17,27 @@
             <div class="card flex flex-wrap flex-column flex-stretch show-slide">
                <img load="lazy" class="w-full" :src="card.image_product" :alt="card.image_product" />
                <div class="pt-2 self-end pb-6 px-3 bg-white">
-                  <strong>{{ card.name_product }}</strong>
+                  <strong>{{ card.name }}</strong>
                   <div class="flex mt-2">
                      <span>
                         <i class="mr-1 fas fa-dollar-sign"></i>
-                        <small>{{ card.price_product.toLocaleString() }}</small>
+                        <small>{{ card.price_per_unit.toLocaleString() }}</small>
                      </span>
                      <span>
                         <i class="mr-1 fas fa-cubes ml-3"></i>
-                        <small>{{ card.stock_product }}{{ card.stock_unit }}</small>
+                        <small>{{ card.amount }} {{ card.unit ? card.unit.name : '' }}</small>
                      </span>
                   </div>
                   <div class="mt-4 w-full flex justify-between">
                      <span @click="btnUpdateProduct(
-                        card.id_product,
-                        card.name_product,
-                        card.image_product,
-                        card.price_product,
-                        card.stock_product,
-                        card.stock_unit,
-                        card.category_product
+                        card.id,
+                        card.name,
+                        card.price_per_unit.toLocaleString(),
+                        card.category.id,
+                        card.amount,
+                        card.unit.id
                      )" class="btn-active-label duration-300 block w-8/12 rounded bg-prussian-blue text-center text-sm py-1 text-gray-100">Update</span>
-                     <span @click="btnDeleteProduct(card.id_product, card.image_product)" class="btn-active-icon duration-300 block w-3/12 rounded bg-gray-500 text-gray-100 flex justify-center items-center">
+                     <span @click="btnDeleteProduct(card.id)" class="btn-active-icon duration-300 block w-3/12 rounded bg-gray-500 text-gray-100 flex justify-center items-center">
                         <i class="fa fa-trash text-sm"></i>
                      </span>
                   </div>
@@ -80,16 +79,15 @@
    })
    
    //Handler for button update
-   const btnUpdateProduct = (id, name, image, price, stock, unit, category) => {
-      //Save into state
-      store.commit('setUpdateProduct', {
-         id_product: id,
-         name_product: name,
-         image_product: image,
-         price_product: price,
-         stock_product: stock,
-         stock_unit: unit,
-         category_product: category
+   const btnUpdateProduct = (id, name, price_per_unit, category_id, amount, unit_id) => {
+     //Save into state
+     store.commit('setUpdateProduct', {
+         id: id,
+         name: name,
+         price_per_unit: price_per_unit,
+         category_id: category_id,
+         amount: amount,
+         unit_id: unit_id
       })
       //Push router to update views
       setTimeout(() => {
@@ -98,10 +96,10 @@
    }
    
    //Handler for button delete
-   const btnDeleteProduct = (key, file) => {
+   const btnDeleteProduct = (id) => {
       
       //Passing data product into modal with save data into state
-      store.commit('setDeleteProduct', { id_product: key, image_product: file })
+      store.commit('setDeleteProduct', id)
       
       setTimeout(() => {
          emits('btnDeleteProduct')

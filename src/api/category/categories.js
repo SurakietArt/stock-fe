@@ -2,16 +2,15 @@
 import BASE_URL from '../BASE_URL.js'
 import axios from 'axios'
 
-const categorys = callback => {
+const categories = callback => {
    //Get TOKEN
    const headers = { headers: { token: localStorage.getItem('TOKEN') } }
-   
-   axios.get(`${BASE_URL}/categorys`, headers)
+
+   axios.get(`${BASE_URL}/categories`, headers)
       .then(res => {
-         //Success
-         if ( res.data.status === 200 ) callback(true, res)
+         if ( res.status === 200 ) callback(true, res)
       })
       .catch(err => console.log(err))
 }
 
-export default categorys
+export default categories

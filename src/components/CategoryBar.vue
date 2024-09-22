@@ -19,7 +19,7 @@
    
    import { reactive, ref, onMounted, computed } from 'vue'
    import { useStore } from 'vuex'
-   import categorys from '../api/category/categorys.js'
+   import categories from '../api/category/categories.js'
    
    //init store
    const store = useStore()
@@ -40,7 +40,7 @@
       }
       
       //Get category from server
-      categorys(getCategory)
+      categories(getCategory)
       
       //Get the currenr category
       const categoryFromState = computed(() => {

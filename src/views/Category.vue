@@ -88,7 +88,7 @@
    
    import { reactive, onMounted, ref, watch } from 'vue'
    import Navbar from '../components/Navbar.vue'
-   import categorys from '../api/category/categorys.js'
+   import categories from '../api/category/categories.js'
    import deleteCategory from '../api/category/delete.js'
    import createCategory from '../api/category/create.js'
    import updateCategory from '../api/category/update.js'
@@ -96,13 +96,13 @@
    const categoryArr = ref('')
    const getCategory = (status, res)  => {
       if ( status ) {
-         categoryArr.value = res.data.results
+         categoryArr.value = res.data
       }
    }
    
    onMounted(() => {
       //Get category from server
-      categorys(getCategory)
+      categories(getCategory)
    })
    
    //Update category
@@ -115,7 +115,7 @@
    //Update handler
    const btnUpdateCategory = () => {
       setTimeout(() => {
-         updateCategory(formUpdate.value.Old, formUpdate.value.New, categorys, getCategory)
+         updateCategory(formUpdate.value.Old, formUpdate.value.New, categories, getCategory)
          formUpdate.value.New = ''
       }, 500)
    }
@@ -129,7 +129,7 @@
    const newCategory = ref('')
    const btnCreateCategory = () => {
       setTimeout(() => {
-         createCategory(newCategory.value, categorys, getCategory)
+         createCategory(newCategory.value, categories, getCategory)
          newCategory.value = ''
       }, 500)
    }
@@ -137,7 +137,7 @@
    //Button delete
    const btnDeleteCategory = (category, key) => {
       setTimeout(() => {
-         deleteCategory(category, key, categorys, getCategory)
+         deleteCategory(category, key, categories, getCategory)
       }, 500)
    }
    

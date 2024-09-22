@@ -44,26 +44,26 @@ const routes = [
 const router = createRouter({ history: createWebHistory(process.env.BASE_URL), routes })
 
 //Navigation Guard
-router.beforeEach((to, from, next) => {
-   
-   // create body
-   const body = { TOKEN: null }
-   
-   //Get token
-   //From local storage if exist
-   if ( localStorage.getItem('TOKEN') ) {
-      body.TOKEN = localStorage.getItem('TOKEN')
-   }
-   
-   //Authentication actions
-   axios.post(`${BASE_URL}/token`, body)
-      .then(res => {
-         if ( to.name !== 'login' && res.data.status !== 200 ) next({ name: 'login' })
-         else next()
-      })
-      .catch(err => {
-         console.log('error', err)
-      })
-})
+// router.beforeEach((to, from, next) => {
+//
+//    // create body
+//    const body = { TOKEN: null }
+//
+//    //Get token
+//    //From local storage if exist
+//    if ( localStorage.getItem('TOKEN') ) {
+//       body.TOKEN = localStorage.getItem('TOKEN')
+//    }
+//
+//    //Authentication actions
+//    axios.post(`${BASE_URL}/token`, body)
+//       .then(res => {
+//          if ( to.name !== 'login' && res.data.status !== 200 ) next({ name: 'login' })
+//          else next()
+//       })
+//       .catch(err => {
+//          console.log('error', err)
+//       })
+// })
 
 export default router

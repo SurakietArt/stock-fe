@@ -1,11 +1,11 @@
 import axios from 'axios'
 import BASE_URL from '../BASE_URL'
 
-const update = (body, success) => {
+const update = (body, success, id) => {
    //Create Headers
    const headers = { headers: { token: body.TOKEN } }
    
-   axios.post(`${BASE_URL}/updateProduct`, body, headers)
+   axios.patch(`${BASE_URL}/items/${id}`, body, headers)
       .then(res => {
          success(res)
       })
